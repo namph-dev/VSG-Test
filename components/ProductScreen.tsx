@@ -10,7 +10,7 @@ const products = [
 ];
 
 const ProductScreen = () => {
-    const [selectedProductId, setSelectedProductId] = useState(products[0]?.id); // Default to the first product
+    const [selectedProductId, setSelectedProductId] = useState(products[0]?.id);
 
     const selectedProduct = products.find(product => product.id === selectedProductId);
 
@@ -21,6 +21,7 @@ const ProductScreen = () => {
                 products={products}
                 selectedProductId={selectedProductId}
                 setSelectedProductId={setSelectedProductId}
+                onAddImage={''}
             />
         </ScrollView>
     );
