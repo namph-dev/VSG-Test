@@ -7,19 +7,34 @@ const currencies = [
     { label: 'EUR', value: 'EUR' },
 ];
 
-const ProductInfo = ({ selectedProduct }) => {
+const ProductInfo = ({ selectedProduct, saveProduct }: { selectedProduct: any, saveProduct: (product: any) => void }) => {
+    const [name, setName] = useState('');
+    const [code, setCode] = useState('');
     const [price, setPrice] = useState('');
     const [currency, setCurrency] = useState('VND');
     const [exchangeRate, setExchangeRate] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
-        setPrice('');
-        setCurrency('VND');
-        setExchangeRate('');
+        if (selectedProduct) {
+            setName(selectedProduct.name);
+            setCode(selectedProduct.code);
+            setPrice(selectedProduct.price);
+            setCurrency(selectedProduct.currency);
+        }
     }, [selectedProduct]);
 
-    const renderItem = ({ item }) => (
+    const handleSave = () => {
+        saveProduct({
+            name,
+            code,
+            price,
+            currency,
+            uri: selectedProduct?.uri || ''
+        });
+    };
+
+    const renderItem = ({ item }: { item: { label: string, value: string } }) => (
         <TouchableOpacity
             style={styles.modalItem}
             onPress={() => {
@@ -63,35 +78,21 @@ const ProductInfo = ({ selectedProduct }) => {
                 <Image style={styles.productImage} source={{ uri: selectedProduct?.uri }} />
                 <View style={styles.productDetails}>
                     <View style={styles.row}>
-                        <Text>Giá nhập: </Text>
-                        <TextInput
-                            style={styles.input}
-                            value={price}
-                            onChangeText={setPrice}
-                            keyboardType="numeric"
-                            placeholder="Nhập giá"
-                        />
-                    </View>
-                    <View style={styles.row}>
-                        <Text>Giá buôn: </Text>
-                        <TextInput
-                            style={styles.input}
-                            defaultValue="0"
-                            keyboardType="numeric"
-                        />
-                    </View>
-                    <View style={styles.row}>
                         <Text>Tên Sp: </Text>
                         <TextInput
                             style={styles.input}
-                            value={selectedProduct?.name || "Tên sản phẩm"}
+                            value={name}
+                            onChangeText={setName}
+                            placeholder="Tên sản phẩm"
                         />
                     </View>
                     <View style={styles.row}>
                         <Text>Mã Vải: </Text>
                         <TextInput
                             style={styles.input}
-                            value={selectedProduct?.code || "Mã sản phẩm"}
+                            value={code}
+                            onChangeText={setCode}
+                            placeholder="Mã sản phẩm"
                         />
                     </View>
                 </View>

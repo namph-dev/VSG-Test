@@ -1,27 +1,48 @@
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ScrollView, StyleSheet, Button, View } from 'react-native';
 import ProductInfo from './order/ProductInfo';
 import ImageGallery from './order/ImageGallery';
-
-const products = [
-    { id: '1', uri: 'https://phamthao.vn/wp-content/uploads/2020/11/sss.jpg', name: 'Sản phẩm 1', code: '#SP001' },
-    { id: '2', uri: 'https://htmediagroup.vn/wp-content/uploads/2021/12/Ao-pijama-6-min.jpg', name: 'Sản phẩm 2', code: '#SP002' },
-    { id: '3', uri: 'https://vsmall.vn/wp-content/uploads/2022/07/cach-chup-anh-quan-ao-dep-bang-dien-thoai.png', name: 'Sản phẩm 3', code: '#SP003' }
-];
+import { fetchProducts, insertProduct } from '../database';
 
 const ProductScreen = () => {
-    const [selectedProductId, setSelectedProductId] = useState(products[0]?.id);
+    const [products, setProducts] = useState([]);
+    const [selectedProductId, setSelectedProductId] = useState(null);
+    console.log(products,'kkkk')
+    useEffect(() => {
+        fetchProducts((fetchedProducts) => {
+            console.log(fetchedProducts, "aaa")
+            setProducts(fetchedProducts);
+            if (fetchedProducts.length > 0) {
+                setSelectedProductId(fetchedProducts[0].id);
+            }
+        });
+    }, []);
 
     const selectedProduct = products.find(product => product.id === selectedProductId);
+
+    const handleAddProduct = (newProduct) => {
+        insertProduct(newProduct.id, newProduct.uri, newProduct.name, newProduct.code);
+        setProducts([...products, newProduct]);
+        setSelectedProductId(newProduct.id);
+    };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <ProductInfo selectedProduct={selectedProduct} />
+            <View style={styles.buttonContainer}>
+                <Button title="Thêm Sản Phẩm" onPress={() => handleAddProduct({
+                    id: (products.length + 1).toString(),
+                    uri: 'https://example.com/new-product.jpg',
+                    name: `Sản phẩm ${products.length + 1}`,
+                    code: `#SP00${products.length + 1}`
+                })} />
+                <Button title="Lưu Sản Phẩm" onPress={() => handleAddProduct(selectedProduct)} />
+            </View>
             <ImageGallery
                 products={products}
                 selectedProductId={selectedProductId}
                 setSelectedProductId={setSelectedProductId}
-                onAddImage={''}
+                onAddImage={handleAddProduct}
             />
         </ScrollView>
     );
@@ -30,6 +51,11 @@ const ProductScreen = () => {
 const styles = StyleSheet.create({
     container: {
         padding: 10,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginVertical: 10,
     },
 });
 
