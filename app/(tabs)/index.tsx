@@ -1,16 +1,19 @@
-import Header from '@/components/order/Header';
-import ImageGallery from '@/components/order/ImageGallery';
-import ProductInfo from '@/components/order/ProductInfo';
-import Summary from '@/components/order/Summary';
-import TabNavigation from '@/components/order/TabNavigation';
-import Table from '@/components/order/Table';
-import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button } from '@rneui/themed';
+import Header from '@/components/order/Header';
+import TabNavigation from '@/components/order/TabNavigation';
 import ProductScreen from '@/components/ProductScreen';
+import Summary from '@/components/order/Summary';
+import Table from '@/components/order/Table';
+import { init } from '../../database';
+import { Button } from 'react-native-elements';
 
-const CreateOrderScreen = () => {
+const App = () => {
+  useEffect(() => {
+    init();
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
@@ -41,4 +44,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateOrderScreen;
+export default App;
